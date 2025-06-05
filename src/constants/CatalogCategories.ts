@@ -1,0 +1,15 @@
+export default [
+  { id: 1, name: "Молоко, сыр, яйца", image: "/images/categories/category1.jpg", url: "molochka",  },
+  { id: 2, name: "Хлеб", image: "/images/categories/category2.jpg", url: "khleb", },
+  { id: 3, name: "Фрукты и овощи", image: "/images/categories/category3.jpg", url: "frukty-ovoshchi", },
+  { id: 4, name: "Замороженные продукты", image: "/images/categories/category4.jpg", url: "zamorozka", },
+  { id: 5, name: "Напитки", image: "/images/categories/category5.jpg", url: "napitki", },
+  { id: 6, name: "Кондитерские изделия", image: "/images/categories/category6.jpg", url: "konditerskiye-izdeliya", },
+  { id: 7, name: "Чай, кофе", image: "/images/categories/category7.jpg", url: "chay-kofe", },
+  { id: 8, name: "Бакалея", image: "/images/categories/category8.jpg", url: "Grocery", },
+  { id: 9, name: "Здоровое питание", image: "/images/categories/category9.jpg", url: "healthy-eating", },
+  { id: 10, name: "Зоотовары", image: "/images/categories/category10.jpg", url: "petsupplies", },
+  { id: 11, name: "Детское питание", image: "/images/categories/category11.jpg", url: "detpit", },
+  { id: 12, name: "Мясо, птица, колбаса", image: "/images/categories/category12.jpg", url: "myasoproduktu", },
+  { id: 13, name: "Непродовольственные товары", image: "/images/categories/category13.jpg", url: "nedprodukty", },
+]
