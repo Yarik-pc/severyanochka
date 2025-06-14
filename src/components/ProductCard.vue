@@ -32,6 +32,7 @@
 <script setup lang="ts">
 import { defineProps } from "vue";
 import { useProductsStore } from "../store/products";
+import { useProfileStore } from "../store/profile";
 
 const props = defineProps({
   id: Number,
@@ -59,6 +60,7 @@ const props = defineProps({
 });
 
 const productStore = useProductsStore();
+const profileStore = useProfileStore();
 
 const clickOnFavorite = productStore.addTofavorite;
 const addToCart = productStore.addToCart;

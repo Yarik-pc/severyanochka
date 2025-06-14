@@ -9,11 +9,11 @@ interface Product {
   categoryId: number,
   isFavorite?: boolean;
   isAdded?: boolean;
-  favoriteId: number;
-  addedId: number,
+  favoriteId?: number | null;
+  addedId?: number | null,
   parentId?: number;
   cartId?: number;
-  quantity: number,
+  quantity?: number,
 }
 
 export default Product;

@@ -4,6 +4,7 @@ import axios from "axios";
 import { useRoute } from "vue-router";
 import Product from "../types/Product";
 import Orders from "../types/Orders";
+import { useProfileStore } from "../store/profile";
 
 export const useProductsStore = defineStore("products", () => {
   const items = ref<Product[]>([]);
@@ -16,6 +17,8 @@ export const useProductsStore = defineStore("products", () => {
   const searchQuery = ref("");
 
   const route = useRoute();
+
+  const profileStore = useProfileStore();
 
   const filteredItems = computed(() => {
     const query = route.query.q ? route.query.q.toString().toLowerCase() : "";
@@ -63,22 +66,24 @@ export const useProductsStore = defineStore("products", () => {
 
   const fetchFavorites = async () => {
     try {
-      const { data: favoriteData } = await axios.get<Product[]>('https://dbe18d33419d0611.mokky.dev/favorites');
+      if (profileStore.isEntered) {
+        const { data: favoriteData } = await axios.get<Product[]>('https://dbe18d33419d0611.mokky.dev/favorites');
 
-      items.value = items.value.map(item => {
-        const favorite = favoriteData.find(fav => fav.parentId === item.id);
+        items.value = items.value.map(item => {
+          const favorite = favoriteData.find(fav => fav.parentId === item.id);
 
-        if (!favorite) {
-          return item;
-        }
+          if (!favorite) {
+            return item;
+          }
 
-        return {
-          ...item,
-          isFavorite: true,
-          favoriteId: favorite.id,
-        }
-      });
-      favorites.value = items.value.filter(item => item.isFavorite);
+          return {
+            ...item,
+            isFavorite: true,
+            favoriteId: favorite.id,
+          }
+        });
+        favorites.value = items.value.filter(item => item.isFavorite);
+      } return
     } catch (error) {
       console.log(error);
     }
@@ -86,7 +91,7 @@ export const useProductsStore = defineStore("products", () => {
 
   const addTofavorite = async (item: Product) => {
     try {
-      if (!item.isFavorite) {
+      if (!item.isFavorite && profileStore.isEntered) {
         const obj = {
           parentId: item.id,
         }
@@ -116,29 +121,31 @@ export const useProductsStore = defineStore("products", () => {
 
   const fetchCart = async () => {
     try {
-      const { data: cartData } = await axios.get<Product[]>('https://dbe18d33419d0611.mokky.dev/cart');
+      if (profileStore.isEntered) {
+        const { data: cartData } = await axios.get<Product[]>('https://dbe18d33419d0611.mokky.dev/cart');
 
-      items.value = items.value.map(item => {
-        const availableCart = cartData.find(cart => cart.cartId === item.id);
+        items.value = items.value.map(item => {
+          const availableCart = cartData.find(cart => cart.cartId === item.id);
 
-        if (!availableCart) {
-          return item;
-        }
+          if (!availableCart) {
+            return item;
+          }
 
-        return {
-          ...item,
-          isAdded: true,
-          addedId: availableCart.id,
-        }
-      });
-      cart.value = items.value.filter(item => item.isAdded);
+          return {
+            ...item,
+            isAdded: true,
+            addedId: availableCart.id,
+          }
+        });
+        cart.value = items.value.filter(item => item.isAdded);
+      } return
     } catch (error) {
       console.log("Ошибка запроса Cart", error);
     }
   }
 
   const addToCart = async (item: Product) => {
-    if (!item.isAdded) {
+    if (!item.isAdded && profileStore.isEntered) {
       const obj = {
         cartId: item.id,
       }
@@ -150,14 +157,6 @@ export const useProductsStore = defineStore("products", () => {
         product.isAdded = true;
         product.addedId = data.id;
         cart.value.push(product);
-      }
-    } else {
-      const product = items.value.find((product) => product.id === item.id);
-      if (product) {
-        await axios.delete(`https://dbe18d33419d0611.mokky.dev/cart/${product.addedId}`);
-        product.isAdded = false
-
-        cart.value = cart.value.filter(cart => cart.id !== product.id)
       }
     }
   }
@@ -189,6 +188,21 @@ export const useProductsStore = defineStore("products", () => {
     if (product) {
       product.quantity = Math.max(newQuantity, 1); // Не даем уйти в 0
     }
+  };
+
+  const resetStore = () => {
+    items.value = items.value.map((item) => ({
+      ...item,
+      isFavorite: false,
+      isAdded: false,
+      favoriteId: null,
+      addedId: null,
+      quantity: 1,
+    }));
+
+    favorites.value = [];
+    cart.value = [];
+    orders.value = [];
   };
 
   return {
@@ -223,5 +237,6 @@ export const useProductsStore = defineStore("products", () => {
 
     totalCartPrice,
     updateQuantity,
+    resetStore,
   };
 });
